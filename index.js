@@ -57,15 +57,18 @@ function list(page, params) {
         loadPage();
     }
 
+// Опции для сортировки (Order By)
 const orderByOptions = [
-    ['new', 'Новые'],
-    ['popular', 'Популярные',true],
-    ['discuss', 'Обсуждаемые'],
-  ];
+    ['new', 'Новые'],                    // Пункт: новые элементы
+    ['popular', 'Популярные', true],     // Пункт: популярные элементы (по умолчанию выбран)
+    ['discuss', 'Обсуждаемые'],          // Пункт: обсуждаемые элементы
+];
+
+// Создание выпадающего списка для сортировки с функцией обратного вызова, которая применяет сортировку
 page.options.createMultiOpt('orderBy', 'Order by', orderByOptions, function(orderBy) {
-    params.args.order = orderBy;
+    params.args.order = orderBy;  // Устанавливает выбранную сортировку в параметры запроса
     if (page.asyncPaginator) {
-        reload();
+        reload();  // Перезагружает данные с учетом новой сортировки
     }
 }, true);
 
@@ -78,19 +81,20 @@ const genres = [
     ['35', 'Смешанный'], ['59', 'Спорт'], ['30', 'Танцевальная'], ['36', 'Электронная'],
     ['37', 'Юмор'], ['52', 'Йога, Спа, Медитация'], ['39', 'Шансон']
   ];
-  page.options.createMultiOpt('genres', 'Type', genres, function(genre) {
+// Создание выпадающего списка для выбора жанра с функцией обратного вызова
+page.options.createMultiOpt('genres', 'Type', genres, function(genre) {
     if (genre > 0) {
-      params.args.genres = genre;
+        params.args.genres = genre;  // Устанавливает выбранный жанр в параметры запроса
     } else {
-      delete params.args.genres;
+        delete params.args.genres;  // Удаляет параметр жанра, если выбран "Все"
     }
     if (page.asyncPaginator) {
-      reload();
+        reload();  // Перезагружает данные с учетом нового жанра
     }
-  }, true);
+}, true);
   
 const countries = [
-  ['111', 'Албания'], ['19', 'Азербайджан'], ['75', 'Ангола'], ['8', 'Австрия'],
+  ['0', 'All', true], ['111', 'Албания'], ['19', 'Азербайджан'], ['75', 'Ангола'], ['8', 'Австрия'],
   ['7', 'Австралия'], ['50', 'Армения'], ['28', 'Аргентина'], ['68', 'Барбадос'],
   ['41', 'Бельгия'], ['5', 'Беларусь'], ['44', 'Болгария'], ['97', 'Боливия'],
   ['86', 'Босния и Герцеговина'], ['20', 'Бразилия'], ['36', 'Латвия'], ['10', 'Литва'],
@@ -114,17 +118,18 @@ const countries = [
   ['72', 'Индонезия'], ['58', 'Ирландия'], ['89', 'Иран'], ['82', 'Исландия'],
   ['16', 'Италия'], ['90', 'Ямайка'], ['40', 'Япония']
 ];
+// Создание выпадающего списка для выбора страны с функцией обратного вызова
 page.options.createMultiOpt('country', 'Выберите страну', countries, function(country) {
     if (country > 0) {
-        params.args.countries = country;
-        delete params.args.genres
-      } else {
-        delete params.args.countries;
-      }
-      if (page.asyncPaginator) {
-        reload();
-      }
-    }, true);
+        params.args.countries = country;  // Устанавливает выбранную страну в параметры запроса
+        delete params.args.genres;        // Удаляет параметр жанра, так как фильтрация теперь по стране
+    } else {
+        delete params.args.countries;     // Удаляет параметр страны, если выбран "Все"
+    }
+    if (page.asyncPaginator) {
+        reload();  // Перезагружает данные с учетом новой страны
+    }
+}, true);
 
 
 
