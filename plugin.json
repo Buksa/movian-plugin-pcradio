@@ -1,7 +1,7 @@
 {	
 	"author": "Buksa",
 	"title": "pcradio",
-	"version": "0.0.1",
+	"version": "0.0.2",
 	"file": "index.js",
 	"showtimeVersion": "5.0.75",
 	"type": "ecmascript",

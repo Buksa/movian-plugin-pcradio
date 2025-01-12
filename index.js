@@ -17,16 +17,45 @@ new page.Route("pcradio:start", function(page) {
     page.metadata.title = "PCRADIO";  // Название страницы
     page.loading = true;  // Показываем индикатор загрузки
 
-    // Заполняем страницу радиостанциями, полученными из функции getStationList
-    populateItems(page, getStationList());
+    // Вызываем функцию для получения списка радиостанций и передаем параметры params);
+    list(page, {href: "https://pcradio.ru/radiostations"});  
 
     page.loading = false;  // Скрываем индикатор загрузки
 });
 
+
+// Функция для отображения списка радиостанций на странице
+function list(page, params) {
+    var pageNumber = 1;  // Номер страницы
+
+    function loadPage() {
+        // Формируем URL для запроса
+        var url = params.href + (params.page ? params.page : '');
+        // Получаем список радиостанций на странице
+        var stationList = getStationList(url);
+        // Создаем элементы на странице для радиостанций
+        populateItems(page, stationList);
+        // Если на странице есть элементы, то подгружаем следующую страницу
+        if (stationList.length > 0) {
+            pageNumber++;  // Увеличиваем номер страницы
+            params.page = '?page=' + pageNumber;  // Устанавливаем параметр ?page=number
+            page.haveMore(true);  // Сообщаем, что есть еще элементы
+        } else {
+            page.haveMore(false);  // Сообщаем, что элементы кончились
+        }
+    }
+
+    // Установка асинхронного пагинатора
+    page.asyncPaginator = loadPage;
+    // Первичная загрузка
+    loadPage();
+}
+
+
 // Функция для получения списка радиостанций с сайта
-function getStationList() {
+function getStationList(url) {
     // Выполняем HTTP-запрос для получения HTML-контента страницы с радиостанциями
-    var response = http.request("https://pcradio.ru/radiostations").toString();
+    var response = http.request(url).toString();
 
     // Разбираем HTML-страницу
     var document = html.parse(response).root;
@@ -65,10 +94,11 @@ function populateItems(page, stationList) {
         // Добавляем элемент с типом "station" (радиостанция)
         page.appendItem('icecast:' + station.streams.hi, 'station', {
             station: station.title,  // Название станции
+            title: station.title,  // Название станции
             description: '',  // Описание (пока пустое)
-            icon: 'https://pcradio.ru' + station.icon + '?size=150x150',  // Иконка с размером 150x150
+            icon: 'https://pcradio.ru' + station.icon,  // Иконка с размером 150x150
             album_art: 'https://pcradio.ru' + station.icon,  // Альбомный арт (та же иконка)
-            album: ''  // Альбом (пока пустой)
+           // album: ''  // Альбом (пока пустой)
         });
     });
 }
